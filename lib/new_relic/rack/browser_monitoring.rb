@@ -59,11 +59,16 @@ module NewRelic
       end
 
       def nonce(env)
+        NewRelic::Agent.logger.info("RCANR: Config nonce: #{NewRelic::Agent.config[:'browser_monitoring.content_security_policy_nonce']}")
         return unless NewRelic::Agent.config[:'browser_monitoring.content_security_policy_nonce']
+        NewRelic::Agent.logger.info("RCANR: Config framework: #{NewRelic::Agent.config[:framework]}")
         return unless NewRelic::Agent.config[:framework] == :rails_notifications
         return unless defined?(ActionDispatch::ContentSecurityPolicy::Request)
 
-        env[ActionDispatch::ContentSecurityPolicy::Request::NONCE]
+        nonce = env[ActionDispatch::ContentSecurityPolicy::Request::NONCE]
+
+        NewRelic::Agent.logger.info("RCANR: Nonce: #{nonce}")
+        nonce
       end
 
       def should_instrument?(env, status, headers)
